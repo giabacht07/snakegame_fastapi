@@ -1,157 +1,108 @@
 # Snake Game
 
-A modern, feature-rich implementation of the classic Snake game built with Python and Pygame. The game includes special food items, a persistent leaderboard system, and an intuitive graphical interface.
+A browser-based Snake Game served by FastAPI. The backend exposes a leaderboard API, while the frontend runs in the browser and provides a fully playable Snake experience with special foods and score persistence.
 
 ## Features
 
-- **Classic Snake Gameplay**: Navigate the snake to eat food and grow longer
-- **Three Food Types**:
-  - 🍎 **Normal Food**: Grows the snake by 1 segment
-  - ⭐ **Super Food**: Grows the snake by 3 segments (appears randomly, lasts 5 seconds)
-  - 💀 **Poison Food**: Shrinks the snake by half its length (appears randomly, lasts 5 seconds)
-- **Blinking Effect**: Special foods blink after 3 seconds to warn before they disappear
-- **Persistent Leaderboard**: Records and ranks player scores based on maximum snake length
-- **Descending Score Ranking**: Longest snakes are ranked first
-- **Fixed HUD**: UI legend stays at the top without obscuring the playable grid
-- **Smooth Controls**: Arrow keys or WASD to navigate
-- **Game States**: Menu, Gameplay, and Leaderboard views
+- **Browser game front-end** served from `/static`
+- **FastAPI backend** with leaderboard endpoints
+- **Persistent leaderboard** saved to `snake_history.json`
+- **Special food types**:
+  - 🍎 **Normal Food**: +1 segment, +10 points
+  - ⭐ **Super Food**: +3 segments, +50 points
+  - 💀 **Poison Food**: Shrinks snake by half on contact
+- **Blinking warning** for special food after 3 seconds
+- **HUD overlay** with score, length, and player name
+- **Keyboard controls** for movement, pause, reset, and menu navigation
 
-## System Requirements
+## Requirements
 
-- Python 3.7+
-- Pygame 2.6.0
+- Python 3.8+
+- `fastapi`
+- `uvicorn[standard]`
+- `aiofiles`
 
 ## Installation
 
 ### 1. Install Python
-Ensure Python 3.7 or higher is installed on your system. Download from [python.org](https://www.python.org/).
+Ensure Python 3.8 or higher is installed on your system. Download from [python.org](https://www.python.org/).
 
-### 2. Clone or Download the Project
-Navigate to the project directory:
-```bash
-cd final
-```
-
-### 3. Install Dependencies
-Install the required packages using pip:
+### 2. Install Dependencies
+From the project directory, install packages with pip:
 ```bash
 pip install -r requirements.txt
 ```
 
-## Running the Game
+## Running the Server
 
-Execute the main program:
+Start the FastAPI server with Uvicorn:
 ```bash
-python main.py
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-The game window will open with the main menu.
+Then open:
+```text
+http://127.0.0.1:8000/
+```
 
-## Game Controls
+## How to Play
 
-### Main Menu
-- **Type** to enter your player name
-- **Click** "Start Simulation" to begin playing
-- **Click** "View Leaderboard" to see high scores
-- **Click** "Exit Application" to quit
+- **Start game**: Enter player name and click **Start Game**
+- **Move**: Arrow keys or WASD
+- **Pause**: `P`
+- **Return to menu**: `ESC`
+- **Restart after game over**: `R`
+- **Open leaderboard**: Click **Leaderboard** from the main menu
 
-### During Gameplay
-- **⬆️ Arrow Up / W**: Move snake up
-- **⬇️ Arrow Down / S**: Move snake down
-- **⬅️ Arrow Left / A**: Move snake left
-- **➡️ Arrow Right / D**: Move snake right
-- **ESC**: Return to main menu
-- **R** (after game over): Restart the game
+## Backend API
 
-### Leaderboard
-- **Click** "Return to Menu" to go back to the main menu
+### GET `/api/scores`
+Returns the leaderboard records as JSON.
 
-## Game Rules
-
-1. **Objective**: Grow your snake to fill as much of the grid as possible without colliding
-2. **Collision**: The game ends if the snake hits:
-   - The game boundaries
-   - Itself
-3. **Win Condition**: Fill the entire 25×25 grid (625 segments)
-4. **Score**: Your score is the length of your snake when you lose or win
-5. **Food Mechanics**:
-   - Normal food appears immediately when eaten
-   - Super and Poison foods appear randomly and disappear after 5 seconds
-   - Both special foods blink at the 3-second mark as a warning
+### POST `/api/scores`
+Accepts JSON payload:
+```json
+{
+  "name": "Player1",
+  "score": 42
+}
+```
 
 ## Project Structure
 
 ```
 final/
-├── main.py              # Main game application and event loop
-├── entities.py          # Snake and food entity classes
-├── config.py            # Game configuration constants
-├── ui.py                # UI components (buttons, text input)
+├── main.py              # FastAPI backend application
 ├── history.py           # Leaderboard persistence manager
-├── decorators.py        # Event logging decorators
-├── snake_history.json   # Persistent leaderboard data (auto-created)
-├── requirements.txt     # Python package dependencies
-└── README.md            # This file
+├── decorators.py        # Logging and pipeline decorators
+├── requirements.txt     # Python dependencies
+├── README.md            # Project documentation
+└── static/              # Browser game frontend
+    ├── index.html
+    ├── style.css
+    └── game.js
 ```
 
-## File Descriptions
+## Notes
 
-- **main.py**: Primary game kernel managing GUI scenes, state transitions, and rendering
-- **entities.py**: Defines the Snake class and Food types (NormalFood, SuperFood, PoisonFood)
-- **config.py**: Centralized configuration for grid size, colors, and FPS settings
-- **ui.py**: UI widgets including Button and TextInput components
-- **history.py**: Manages leaderboard persistence to `snake_history.json`
-- **decorators.py**: Provides logging decorators for game events and data pipeline validation
-
-## Leaderboard
-
-The leaderboard is automatically saved to `snake_history.json` and persists between sessions. Records are sorted by:
-- **Primary**: Snake length (descending - longest first)
-- **Secondary**: Timestamp (most recent first for tied lengths)
-
-You can view the leaderboard by clicking "View Leaderboard" in the main menu.
-
-## Gameplay Tips
-
-1. **Plan Ahead**: Try to anticipate where the snake will move to avoid trapping yourself
-2. **Special Foods**: Super food is worth 3 segments - prioritize collecting it before it disappears
-3. **Poison Food**: Avoid unless your snake is very long and you need to reduce size for strategic advantage
-4. **Corner Tricks**: Use corners and walls strategically to create longer, safer paths
-5. **Blinking Warning**: When special foods start blinking (at 3 seconds), they'll disappear soon
-
-## Technical Details
-
-- **Grid Size**: 25×25 tiles (625 total)
-- **Tile Size**: 25 pixels
-- **Window Size**: 625×675 pixels (25×25 grid + 50px HUD)
-- **FPS**: 10 (one move per frame)
-- **Special Food Duration**: 5 seconds
-- **Blink Warning**: Starts at 3 seconds
-- **Blink Frequency**: 200ms alternation
+- The game frontend is served from `static/index.html`.
+- Leaderboard records are stored in `snake_history.json`.
+- This project is designed to run in a browser; it is not a desktop Pygame application.
 
 ## Troubleshooting
 
-### "Module not found: pygame"
+### `ModuleNotFoundError: fastapi`
+Install dependencies again:
 ```bash
-pip install pygame
+pip install -r requirements.txt
 ```
 
-### Game runs slowly
-- Ensure no other resource-intensive applications are running
-- Check that FPS is set correctly in `config.py`
+### Unable to load static files
+Make sure `main.py` is started from the project root where the `static/` folder exists.
 
 ### Leaderboard not saving
-- Ensure the program has write permissions in the game directory
-- Check that `snake_history.json` is not corrupted
+Check that the process has write permission to `snake_history.json` and that the directory is writable.
 
 ## License
 
 This project is provided as-is for educational purposes.
-
-## Changelog
-
-### v1.0
-- Initial release with core gameplay
-- Leaderboard system
-- Three food types
-- HUD UI with fixed positioning
