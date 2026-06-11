@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake Game</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <div id="menu-screen" class="screen active">
+      <div class="card">
+        <h1>SNAKE GAME</h1>
+        <div class="field">
+          <label for="name-input">Player Name</label>
+          <input id="name-input" type="text" maxlength="14"
+                 placeholder="Enter your name…" value="Player1" autocomplete="off" />
+        </div>
+        <button id="btn-start" class="btn btn-primary">&#9654; Start Game</button>
+        <button id="btn-leaderboard" class="btn btn-ghost">&#127942; Leaderboard</button>
+        <p class="hint">WASD / Arrows to move &nbsp;·&nbsp; P to pause &nbsp;·&nbsp; ESC for menu</p>
+        <div class="food-legend">
+          <span>🍎 +1 seg &nbsp;10 pts</span>
+          <span>⭐ +3 seg &nbsp;50 pts</span>
+          <span>💀 half seg &nbsp;0 pts</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="game-screen" class="screen">
+      <canvas id="game-canvas" width="625" height="675"></canvas>
+    </div>
+
+    <div id="leaderboard-screen" class="screen">
+      <div class="card lb-card">
+        <h1>LEADERBOARD</h1>
+        <div id="lb-table"></div>
+        <button id="btn-back" class="btn btn-ghost">&#8592; Back to Menu</button>
+      </div>
+    </div>
+
+  </div>
+  <script src="/static/game.js"></script>
+</body>
+</html>
